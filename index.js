@@ -91,7 +91,7 @@ app.get("/productos/:id", (req, res) => {
 })
 
 app.post("/productos", (req, res) => {
-	try {
+	 try {
 		let bodyTemp = ""
 
 		req.on("data", (chunk) => {
