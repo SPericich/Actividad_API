@@ -1,4 +1,4 @@
-### Obtencion de todos los productos
+### Obtención de todos los productos
 GET http://localhost:1234/productos/
 
 ### Obtención de un producto específico
@@ -30,7 +30,7 @@ DELETE http://localhost:1234/productos/8
 GET http://localhost:1234/usuarios/
 
 
-### Obtención de los datos de un usuario específico
+### 2. OBTENCIÓN DE UN USUARIO EN ESPECÍFICO
 GET http://localhost:1234/usuarios/1/
 
 
