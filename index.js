@@ -1,316 +1,312 @@
-import { createRequire } from "node:module"
-import express from "express"
+import { createRequire } from "node:module";
+import express from "express";
 
-const require = createRequire(import.meta.url)
-const datos = require("./datos.json")
+const require = createRequire(import.meta.url);
+const datos = require("./datos.json");
 
 const html =
-	"<h1>Bienvenido a la API</h1><p>Los comandos disponibles son:</p><ul><li>GET: /productos/</li><li>GET: /productos/estadistica</li><li>GET: /productos/nombre/id</li><li>GET: /productos/precio/id</li><li>GET: /productos/id</li><li>POST: /productos/</li><li>DELETE: /productos/id</li><li>PUT: /productos/id</li><li>PATCH: /productos/id</li><li>GET: /usuarios/</li><li>GET: /usuarios/nombre/id</li><li>GET: /usuarios/telefono/id</li><li>GET: /usuarios/id</li><li>POST: /usuarios/</li><li>DELETE: /usuarios/id</li><li>PUT: /usuarios/id</li><li>PATCH: /usuarios/id</li></ul>"
+	"<h1>Bienvenido a la API</h1><p>Los comandos disponibles son:</p><ul><li>GET: /productos/</li><li>GET: /productos/estadistica</li><li>GET: /productos/nombre/id</li><li>GET: /productos/precio/id</li><li>GET: /productos/id</li><li>POST: /productos/</li><li>DELETE: /productos/id</li><li>PUT: /productos/id</li><li>PATCH: /productos/id</li><li>GET: /usuarios/</li><li>GET: /usuarios/nombre/id</li><li>GET: /usuarios/telefono/id</li><li>GET: /usuarios/id</li><li>POST: /usuarios/</li><li>DELETE: /usuarios/id</li><li>PUT: /usuarios/id</li><li>PATCH: /usuarios/id</li></ul>";
 
-const app = express()
+const app = express();
 
-const exposedPort = 1234
+const exposedPort = 1234;
+
+app.use(express.json());
 
 app.get("/", (req, res) => {
-	res.status(200).send(html)
-})
+	res.status(200).send(html);
+});
 
+//Listado completo de productos
 app.get("/productos", (req, res) => {
 	try {
-		let allProducts = datos.productos
-		res.status(200).json(allProducts)
+		let allProducts = datos.productos;
+		res.status(200).json(allProducts);
 	} catch (error) {
-		res.status(204).json({ message: error })
+		res.status(204).json({ message: error });
 	}
-})
+});
 
-//10. Conocer la cantidad de productos y la sumatoria de sus precios
+//10. CONOCER LA CANTIDAD DE PRODUCTOS
+//Y LA SUMATORIA DE SUS PRECIOS
 app.get("/productos/estadistica", (req, res) => {
 	try {
-		let productos = datos.productos
-		let cantidadProductos = productos.length
+		let productos = datos.productos;
+		let cantidadProductos = productos.length;
 		let sumatoriaPrecios = productos.reduce((total, producto) => {
-			return total + producto.precio
-		}, 0)
+			return total + producto.precio;
+		}, 0);
 		res.status(200).json({
 			cantidadProductos,
 			sumatoriaPrecios,
-		})
+		});
 	} catch (error) {
-		res.status(204).json({ message: error })
+		res.status(204).json({ message: error });
 	}
-})
+});
 
-//6. endpoint que devuelve el precio de un producto
+//6. OBTENER EL PRECIO DE UN PRODUCTO
 app.get("/productos/precio/:id", (req, res) => {
 	try {
-		let productoId = parseInt(req.params.id)
+		let productoId = parseInt(req.params.id);
 		let productoEncontrado = datos.productos.find(
 			(producto) => producto.id === productoId
-		)
+		);
 		if (productoEncontrado) {
-			res.status(200).json({ precio: productoEncontrado.precio })
+			res.status(200).json({ precio: productoEncontrado.precio });
 		} else {
-			res.status(400).json({ error: "Producto no enocntrado" })
+			res.status(400).json({ error: "Producto no enocntrado" });
 		}
 	} catch (error) {
-		res.status(204).json({ message: error })
+		res.status(204).json({ message: error });
 	}
-})
+});
 
-//7. endpoint para obtener el nombre de un producto
+//7. OBTENER EL NOMBRE DE UN PRODUCTO
 app.get("/productos/nombre/:id", (req, res) => {
 	try {
-		let productoId = parseInt(req.params.id)
+		let productoId = parseInt(req.params.id);
 		let productoEncontrado = datos.productos.find(
 			(producto) => producto.id === productoId
-		)
+		);
 		if (productoEncontrado) {
-			res.status(200).json({ nombre: productoEncontrado.nombre })
+			res.status(200).json({ nombre: productoEncontrado.nombre });
 		} else {
-			res.status(400).json({ error: "Producto no encontrado" })
+			res.status(400).json({ error: "Producto no encontrado" });
 		}
 	} catch (error) {
-		res.status(204).json({ message: error })
+		res.status(204).json({ message: error });
 	}
-})
+});
 
+//Devuelve los datos de un producto en particular
 app.get("/productos/:id", (req, res) => {
 	try {
-		let productoId = parseInt(req.params.id)
+		let productoId = parseInt(req.params.id);
 		let productoEncontrado = datos.productos.find(
 			(producto) => producto.id === productoId
-		)
+		);
 		if (!productoEncontrado) {
-			res.status(204).json({ message: "Producto no encontrado" })
+			res.status(204).json({ message: "Producto no encontrado" });
 		}
-		res.status(200).json(productoEncontrado)
+		res.status(200).json(productoEncontrado);
 	} catch (error) {
-		res.status(204).json({ message: error })
+		res.status(204).json({ message: error });
 	}
-})
+});
 
-app.post("/productos", (req, res) => {
-	 try {
-		let bodyTemp = ""
+//Agregar un producto
+app.post('/productos', (req, res) => {
+    const { nombre, tipo, precio } = req.body;
+    const nuevoProducto = {
+      id: datos.productos.length + 1,
+      nombre,
+      tipo,
+      precio,
+    };
+    datos.productos.push(nuevoProducto);
+    res.status(201).json({ mensaje: 'Producto creado con éxito', producto: nuevoProducto });
+  });
 
-		req.on("data", (chunk) => {
-			bodyTemp += chunk.toString()
-		})
-		req.on("end", () => {
-			const data = JSON.parse(bodyTemp)
-			req.body = data
-			datos.productos.push(req.body)
-		})
-		res.status(201).json({ message: "success" })
-	} catch (error) {
-		res.status(204).json({ message: "error" })
+//Modificar un producto
+app.patch('/productos/:id', (req, res) => {
+    const productoId = parseInt(req.params.id);
+    const { nombre, tipo, precio } = req.body;
+  
+    const producto = datos.productos.find((producto) => producto.id === productoId);
+  
+    if (!producto) {
+      return res.status(404).json({ mensaje: 'Producto no encontrado' });
+    }
+  
+    if (nombre) producto.nombre = nombre;
+    if (tipo) producto.tipo = tipo;
+    if (precio) producto.precio = precio;
+  
+    res.json({ mensaje: 'Producto actualizado con éxito', producto });
+  });
+
+//Remplazar un producto
+app.put("/productos/:id", (req, res) => {
+	let productoACambiarId = parseInt(req.params.id);
+	let { nombre, tipo, precio } = req.body;
+
+	let producto = datos.productos.find(
+		(producto) => producto.id === productoACambiarId
+	);
+
+	if (!producto) {
+		return res.status(404).json({ mensaje: "Producto no encontrado" });
 	}
-})
 
-app.patch("/productos/:id", (req, res) => {
-	let idProductoAEditar = parseInt(req.params.id)
-	let productoAActualizar = datos.productos.find(
-		(producto) => producto.id === idProductoAEditar
-	)
-	if (!productoAActualizar) {
-		res.status(204).json({ message: "Producto no encontrado" })
-	}
+	producto.nombre = nombre;
+	producto.tipo = tipo;
+	producto.precio = precio;
 
-	let bodyTemp = ""
+	return res.json({ mensaje: "Producto actualizado con éxito", producto });
+});
 
-	req.on("data", (chunk) => {
-		bodyTemp += chunk.toString()
-	})
-
-	req.on("end", () => {
-		const data = JSON.parse(bodyTemp)
-		req.body = data
-
-		if (data.nombre) {
-			productoAActualizar.nombre = data.nombre
-		}
-
-		if (data.tipo) {
-			productoAActualizar.tipo = data.tipo
-		}
-
-		if (data.precio) {
-			productoAActualizar.precio = data.precio
-		}
-
-		res.status(200).send("Producto actualizado")
-	})
-})
-
+//Eliminar un producto
 app.delete("/productos/:id", (req, res) => {
-	let idProductoABorrar = parseInt(req.params.id)
+	let idProductoABorrar = parseInt(req.params.id);
 	let productoABorrar = datos.productos.find(
 		(producto) => producto.id === idProductoABorrar
-	)
+	);
 
 	if (!productoABorrar) {
-		res.status(204).json({ message: "Producto no encontrado" })
+		res.status(204).json({ message: "Producto no encontrado" });
 	}
 
-	let indiceProductoABorrar = datos.productos.indexOf(productoABorrar)
+	let indiceProductoABorrar = datos.productos.indexOf(productoABorrar);
 	try {
-		datos.productos.splice(indiceProductoABorrar, 1)
-		res.status(200).json({ message: "success" })
+		datos.productos.splice(indiceProductoABorrar, 1);
+		res.status(200).json({ message: "success" });
 	} catch (error) {
-		res.status(204).json({ message: "error" })
+		res.status(204).json({ message: "error" });
 	}
-})
+});
 
-//1. endpoint para el listado completo de usuarios
+//1. OBTENER EL LISTADO COMPLETO DE USUARIOS
 app.get("/usuarios/", (req, res) => {
 	try {
-		let allUsers = datos.usuarios
+		let allUsers = datos.usuarios;
 
-		res.status(200).json(allUsers)
+		res.status(200).json(allUsers);
 	} catch (error) {
-		res.status(204).json({ message: error })
+		res.status(204).json({ message: error });
 	}
-})
+});
 
-//8. endpoint para obtener el teléfono de un usuario
+//8. OBTENER LE TELÉFONO DE UN USUARIO
 app.get("/usuarios/telefono/:id", (req, res) => {
 	try {
-		let usuarioId = parseInt(req.params.id)
+		let usuarioId = parseInt(req.params.id);
 		let usuarioEncontrado = datos.usuarios.find(
 			(usuario) => usuario.id === usuarioId
-		)
+		);
 		if (usuarioEncontrado) {
-			res.status(200).json({ telefono: usuarioEncontrado.telefono })
+			res.status(200).json({ telefono: usuarioEncontrado.telefono });
 		} else {
-			res.status(404).json({ error: "Usuario no encontrado" })
+			res.status(404).json({ error: "Usuario no encontrado" });
 		}
 	} catch (error) {
-		res.status(204).json({ message: error })
+		res.status(204).json({ message: error });
 	}
-})
+});
 
-//9. endpoint para obtener el nombre de un usuario
+//9. OBTENER EL NOMBRE DE UN USUARIO
 app.get("/usuarios/nombre/:id", (req, res) => {
 	try {
-		let usuarioId = parseInt(req.params.id)
+		let usuarioId = parseInt(req.params.id);
 		let usuarioEncontrado = datos.usuarios.find(
 			(usuario) => usuario.id === usuarioId
-		)
+		);
 
 		if (usuarioEncontrado) {
-			res.status(200).json({ nombre: usuarioEncontrado.nombre })
+			res.status(200).json({ nombre: usuarioEncontrado.nombre });
 		} else {
-			res.status(404).json({ error: "Usuario no encontrado" })
+			res.status(404).json({ error: "Usuario no encontrado" });
 		}
 	} catch (error) {
-		res.status(204).json({ message: error })
+		res.status(204).json({ message: error });
 	}
-})
+});
 
-//2. endpoint para obtener los datos de un usuario por Id
+//2. OBTENER LOS DATOS DE UN USUARIO
 app.get("/usuarios/:id", (req, res) => {
 	try {
-		let usuarioId = parseInt(req.params.id)
+		let usuarioId = parseInt(req.params.id);
 		let usuarioEncontrado = datos.usuarios.find(
 			(usuario) => usuario.id === usuarioId
-		)
+		);
 
 		if (!usuarioEncontrado) {
-			res.status(204).json({ message: "Usuario no encontrado" })
+			res.status(204).json({ message: "Usuario no encontrado" });
 		}
-		res.status(200).json(usuarioEncontrado)
+		res.status(200).json(usuarioEncontrado);
 	} catch (error) {
-		res.status(204).json({ message: error })
+		res.status(204).json({ message: error });
 	}
-})
+});
 
-//3. endpoint para guardar un nuevo usuario
-app.post("/usuarios", (req, res) => {
-	try {
-		let bodyTemp = ""
+//3. CREAR UN NUEVO USUARIO
+app.post('/usuarios', (req, res) => {
+    const { nombre, edad, email, telefono } = req.body;
+    const nuevoUsuario = {
+      id: datos.usuarios.length + 1,
+      nombre,
+      edad,
+      email,
+      telefono,
+    };
+    datos.usuarios.push(nuevoUsuario);
+    res.status(201).json({ mensaje: 'Usuario creado con éxito', usuario: nuevoUsuario });
+  });
 
-		req.on("data", (chunk) => {
-			bodyTemp += chunk.toString()
-		})
+//4. MODIFICAR DATOS DE UN USUARIO
+app.patch('/usuarios/:id', (req, res) => {
+    const usuarioId = parseInt(req.params.id);
+    const { nombre, edad, email, telefono } = req.body;
+  
+    const usuario = datos.usuarios.find((usuario) => usuario.id === usuarioId);
+  
+    if (!usuario) {
+      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
+  
+    if (nombre) usuario.nombre = nombre;
+    if (edad) usuario.edad = edad;
+    if (email) usuario.email = email;
+    if (telefono) usuario.telefono = telefono;
+  
+    res.json({ mensaje: 'Usuario actualizado con éxito', usuario });
+  });
 
-		req.on("end", () => {
-			const data = JSON.parse(bodyTemp)
-			req.body = data
-			datos.usuarios.push(req.body)
-		})
+//Reemplazar un usuario
+app.put("/usuarios/:id", (req, res) => {
+	let usuarioAReemplazarId = parseInt(req.params.id);
+	let { nombre, edad, email, telefono } = req.body;
 
-		res.status(201).json({ message: "success" })
-	} catch (error) {
-		res.status(204).json({ message: "error" })
+	let usuario = datos.usuarios.find(
+		(usuario) => usuario.id === usuarioAReemplazarId
+	);
+
+	if (!usuario) {
+		return res.status(404).json({ mensaje: "Usuario no encontrado" });
 	}
-})
 
-//4. endpoint para modificar algún dato de un usuario en particular
-app.patch("/usuarios/:id", (req, res) => {
-	let idUsuarioAEditar = parseInt(req.params.id)
-	let usuarioAActualizar = datos.usuarios.find(
-		(usuario) => usuario.id === idUsuarioAEditar
-	)
+	usuario.nombre = nombre;
+	usuario.edad = edad;
+	usuario.email = email;
+	usuario.telefono = telefono;
 
-	if (!usuarioAActualizar) {
-		res.status(204).json({ message: "Usuario no encontrado" })
-	}
+	return res.json({ mensaje: "Usuario actualizado con éxito", usuario });
+});
 
-	let bodyTemp = ""
-
-	req.on("data", (chunk) => {
-		bodyTemp += chunk.toString()
-	})
-
-	req.on("end", () => {
-		const data = JSON.parse(bodyTemp)
-		req.body = data
-
-		if (data.nombre) {
-			usuarioAActualizar.nombre = data.nombre
-		}
-
-		if (data.edad) {
-			usuarioAActualizar.edad = data.edad
-		}
-
-		if (data.email) {
-			usuarioAActualizar.email = data.email
-		}
-
-		if (data.telefono) {
-			usuarioAActualizar.telefono = data.telefono
-		}
-
-		res.status(200).send("Usuario actualizado")
-	})
-})
-
-//5. endpoint para borrar un usuario determinado
+//5. ELIMINAR UN USUARIO
 app.delete("/usuarios/:id", (req, res) => {
-	let idUsuarioABorrar = parseInt(req.params.id)
+	let idUsuarioABorrar = parseInt(req.params.id);
 	let usuarioABorrar = datos.usuarios.find(
 		(usuario) => usuario.id === idUsuarioABorrar
-	)
+	);
 
 	if (!usuarioABorrar) {
-		res.status(204).json({ message: "Usuario no encontrado" })
+		res.status(204).json({ message: "Usuario no encontrado" });
 	}
 
-	let indiceUsuarioABorrar = datos.usuarios.indexOf(usuarioABorrar)
+	let indiceUsuarioABorrar = datos.usuarios.indexOf(usuarioABorrar);
 	try {
-		datos.usuarios.splice(indiceUsuarioABorrar, 1)
-		res.status(200).json({ message: "success" })
+		datos.usuarios.splice(indiceUsuarioABorrar, 1);
+		res.status(200).json({ message: "success" });
 	} catch (error) {
-		res.status(204).json({ message: "error" })
+		res.status(204).json({ message: "error" });
 	}
-})
+});
 
 app.use((req, res) => {
-	res.status(404).send("<h1>404</h1>")
-})
+	res.status(404).send("<h1>404</h1>");
+});
 
 app.listen(exposedPort, () => {
-	console.log("Servidor escuchando en http://localhost:" + exposedPort)
-})
+	console.log("Servidor escuchando en http://localhost:" + exposedPort);
+});

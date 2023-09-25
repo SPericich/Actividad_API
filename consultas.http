@@ -2,22 +2,19 @@
 GET http://localhost:1234/productos/
 
 ### Obtención de un producto específico
-
 GET http://localhost:1234/productos/3/
 
-### Agregado de un producto nuevo, el body lleva el json con el objeto
+### Agregado de un producto nuevo
 POST http://localhost:1234/productos
 Content-Type: application/json
 
 {
-    "id": 11,
     "nombre": "Mixer multiuso ACME",
     "tipo": "Electrodoméstico de cocina",
     "precio": 150.15
 }
 
 ### Actualización de un producto
-
 PATCH http://localhost:1234/productos/10
 Content-Type: application/json
 
@@ -29,60 +26,85 @@ Content-Type: application/json
 DELETE http://localhost:1234/productos/8
 
 
-### 1. Obtención de todos los usuarios
+### 1. OBTENCIÓN DE TODOS LOS USUARIOS
 GET http://localhost:1234/usuarios/
 
-### Obtención de los datos de un usuario específico
 
+### Obtención de los datos de un usuario específico
 GET http://localhost:1234/usuarios/1/
 
-### 3. Agregar un usuario nuevo
+
+### 3. AGREGAR UN NUEVO USUARIO
 POST http://localhost:1234/usuarios
 Content-Type: application/json
 
 {
-    "id": 11,
     "nombre": "Jimena Hernández",
     "edad": 38,
     "email": "jimenitahot@gmail.com",
     "telefono": "+54 92395-243578"
 }
 
-### 4. Modificar un dato de un usaurio
-
-PATCH http://localhost:1234/usuarios/11
+### 4. MODIFICAR UN DATO DE UN USUARIO
+PATCH http://localhost:1234/usuarios/4
 Content-Type: application/json
 
 {
     "telefono": "+1 118-415-8972"
 }
 
-
-### 5. Borrar un usuario
+### 5. BORRAR UN USUARIO
 DELETE http://localhost:1234/usuarios/5
 
-### 6. Obtención del precio de un producto específico
-
+### 6. OBTENCIÓN DEL PRECIO DE UN PRODUCTO
 GET http://localhost:1234/productos/precio/3
 
-### 7. Obtención del nombre de un producto específico
+### 7. OBTENCIÓN DLE NOMBRE DE UN PRODUCTO
 
 GET http://localhost:1234/productos/nombre/2
 
-### 8. Obtención del teléfono de un usuario específico
+### 8. OBTENCIÓN DEL TELÉFONO DE UN USUARIO
 
 GET http://localhost:1234/usuarios/telefono/7
 
-### 9. Obtención del nombre de un usuario específico
+### 9. ONTENCIÓN DLE NOMBRE DE UN USUARIO
 
 GET http://localhost:1234/usuarios/nombre/9
 
-### 10. cantidad total de productos y sumatoria de sus precios (no anda)
+### 10. CANTIDAD TOTAL DE PRODUCTOS Y SUMATORIA DE SUS PRECIOS
 
 GET http://localhost:1234/productos/estadistica
 
+###Reemplazar un usuario
+PUT http://localhost:1234/usuarios/2
+Content-Type: application/json
 
+{
+    "nombre": "Pamela López",
+    "edad": 22,
+    "email": "pampam@gmail.com",
+    "telefono": "+1 427-345-3578"
+}
 
+###Reemplazar un producto
+PUT http://localhost:1234/productos/1
+Content-Type: application/json
 
+{
+    "nombre": "Balanza electrónica",
+    "tipo": "Electrodoméstico de cocina",
+    "precio": 120.50
+}
+
+###Agrego otro usuario
+POST http://localhost:1234/usuarios
+Content-Type: application/json
+
+{
+    "nombre": "Noelia Albarracín",
+    "edad": 35,
+    "email": "noelamojigata@gmail.com",
+    "telefono": "+1 923-756-3578"
+}
 
 
