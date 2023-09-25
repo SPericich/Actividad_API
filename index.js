@@ -177,7 +177,7 @@ app.get("/usuarios/", (req, res) => {
 	}
 });
 
-//8. OBTENER LE TELÉFONO DE UN USUARIO
+//8. OBTENER EL TELÉFONO DE UN USUARIO
 app.get("/usuarios/telefono/:id", (req, res) => {
 	try {
 		let usuarioId = parseInt(req.params.id);
